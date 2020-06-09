@@ -51,9 +51,9 @@ public class UserController {
 
         filters.put("id", id);
         filters.put("name", name);
-        filters.put("house", gender);
-        filters.put("school", birthday);
-        filters.put("species", city);
+        filters.put("gender", gender);
+        filters.put("birthday", birthday);
+        filters.put("city", city);
 
         map.put("filters", filters);
 

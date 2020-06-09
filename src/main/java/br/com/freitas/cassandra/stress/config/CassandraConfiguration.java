@@ -36,7 +36,7 @@ public class CassandraConfiguration extends AbstractCassandraConfiguration {
 
     @Override
     public String[] getEntityBasePackages() {
-        return new String[]{"br.com.freitas.pocitau.demo.domain.model"};
+        return new String[]{"br.com.freitas.cassandra.stress.domain.model"};
     }
 
     @Override
