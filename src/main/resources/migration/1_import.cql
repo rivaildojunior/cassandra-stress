@@ -1,6 +1,6 @@
 CREATE TABLE "ep9cas001"."tb_user"
 (
-    id       UUID,
+    id       int,
     name     text,
     gender   text,
     birthday timestamp,

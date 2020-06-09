@@ -10,7 +10,6 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.UUID;
 
 @RestController
 @RequestMapping("/users")
@@ -28,7 +27,7 @@ public class UserController {
 
     @GetMapping(value = "/filters")
     public List<User> getUsers(
-            @RequestParam(value = "id", required = false) UUID id,
+            @RequestParam(value = "id", required = false) Integer id,
             @RequestParam(value = "name", required = false) String name,
             @RequestParam(value = "gender", required = false) String gender,
             @RequestParam(value = "birthday", required = false) String birthday,
@@ -40,7 +39,7 @@ public class UserController {
     }
 
     public Map<String, Object> getMapFilters(
-            UUID id,
+            Integer id,
             String name,
             String gender,
             String birthday,

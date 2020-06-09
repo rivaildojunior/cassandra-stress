@@ -11,27 +11,27 @@ import org.springframework.data.cassandra.config.SchemaAction;
 @Configuration
 public class CassandraConfiguration extends AbstractCassandraConfiguration {
     @Value("${spring.data.cassandra.contact-points}")
-    private String contactPoints;
+    private String CONTACT_POINTS;
 
     @Value("${spring.data.cassandra.keyspace-name}")
-    private String keySpace;
+    private String KEYSPACE;
 
     @Value("${spring.data.cassandra.schema-action}")
-    private String schemaAction;
+    private String SCHEMA_ACTION;
 
     @Override
     protected String getContactPoints() {
-        return this.contactPoints;
+        return this.CONTACT_POINTS;
     }
 
     @Override
     protected String getKeyspaceName() {
-        return this.keySpace;
+        return this.KEYSPACE;
     }
 
     @Override
     public SchemaAction getSchemaAction() {
-        return SchemaAction.valueOf(this.schemaAction);
+        return SchemaAction.valueOf(this.SCHEMA_ACTION);
     }
 
     @Override
