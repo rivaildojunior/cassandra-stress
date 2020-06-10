@@ -1,4 +1,4 @@
-package br.com.freitas.cassandra.stress.config;
+package br.com.freitas.dse.stress.config;
 
 import com.datastax.driver.core.Cluster;
 import com.datastax.driver.core.QueryLogger;
@@ -9,7 +9,7 @@ import org.springframework.data.cassandra.config.AbstractCassandraConfiguration;
 import org.springframework.data.cassandra.config.SchemaAction;
 
 @Configuration
-public class CassandraConfiguration extends AbstractCassandraConfiguration {
+public class DseConfiguration extends AbstractCassandraConfiguration {
     @Value("${spring.data.cassandra.contact-points}")
     private String CONTACT_POINTS;
 

@@ -1,7 +1,7 @@
-package br.com.freitas.cassandra.stress.domain.service;
+package br.com.freitas.dse.stress.domain.service;
 
-import br.com.freitas.cassandra.stress.domain.model.User;
-import br.com.freitas.cassandra.stress.domain.repository.UserRepository;
+import br.com.freitas.dse.stress.domain.model.User;
+import br.com.freitas.dse.stress.domain.repository.UserRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;

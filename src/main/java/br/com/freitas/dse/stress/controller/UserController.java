@@ -1,7 +1,7 @@
-package br.com.freitas.cassandra.stress.controller;
+package br.com.freitas.dse.stress.controller;
 
-import br.com.freitas.cassandra.stress.domain.model.User;
-import br.com.freitas.cassandra.stress.domain.service.UserService;
+import br.com.freitas.dse.stress.domain.model.User;
+import br.com.freitas.dse.stress.domain.service.UserService;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;

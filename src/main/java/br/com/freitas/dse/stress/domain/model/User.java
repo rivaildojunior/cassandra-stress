@@ -1,4 +1,4 @@
-package br.com.freitas.cassandra.stress.domain.model;
+package br.com.freitas.dse.stress.domain.model;
 
 import com.datastax.driver.core.DataType;
 import lombok.Builder;

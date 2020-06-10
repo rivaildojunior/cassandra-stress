@@ -1,4 +1,4 @@
-package br.com.freitas.cassandra.stress.config;
+package br.com.freitas.dse.stress.config;
 
 import org.modelmapper.ModelMapper;
 import org.springframework.context.annotation.Bean;

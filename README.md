@@ -1,25 +1,37 @@
-# Cassandra Stress 
+# DataStax Enterprise + DSE Search - Stress Testing 
 
 1. Pré-requisitos:
 
     -  OpenJDK 8 ou Oracle Java Platform, Standard Edition 8 (JDK).
     -  Python 2.7 para uso do cqlsh.
+    -  Docker
     
-2. Faça instalação do Cassandra:
-`https://cassandra.apache.org/download/`
-
-3. Iniciar o servidor do Cassandra:
-    - Navegar pelo prompt de comando até a pasta do cassandra e depois para dentro de bin usando o 
-      comando cd. Após entrar na pasta bin do cassandra basta digitar.
-
+2. Crie um container DSE com a Pesquisa ativada:
       ```console
-      user@user:~$ cassandra.bat -f
+      user@user:~$ docker run -e DS_LICENSE=accept --name demo-dse -p 9042:9042 -d datastax/dse-server:6.8.0-ubi7 -R
       ```
 
-   - Após executar o comando o servidor estaria ligado e deve-se manter a janela do prompt aberta. 
-     Caso você fechar a janela do prompt de comando, o servidor será desligado.  
+    - Mais orientações podem ser encontradas [Aqui](https://hub.docker.com/r/datastax/dse-server)'
 
-4. Subindo a aplicação:
+3. Crie um container DSE-Studio:
+      ```console
+      user@user:~$ docker run -e DS_LICENSE=accept --name my-studio -p 9091:9091 -d datastax/dse-studio --link demo-dse
+      ```
+
+    - Mais orientações podem ser encontradas [Aqui](https://hub.docker.com/r/datastax/dse-studio/)'
+
+4. Para poder administrar o banco de dados:
+      ```console
+      user@user:~$ docker exec -it demo-dse cqlsh
+      ```
+     
+5. Criando keyspace:
+      ```console
+      user@user:~$ CREATE KEYSPACE IF NOT EXISTS ep9cas001 WITH REPLICATION = { 'class' : 'NetworkTopologyStrategy', 'dc1' : 2 };
+      user@user:~$ USE ep9cas001;
+      ```        
+   
+6. Subindo a aplicação:
    - Basta clonar o projeto:
    
      ```console
@@ -33,19 +45,12 @@
      user@user:~$ mvn clean install
      ```
         
-5. Para poder administrar o banco de dados:
-   - Basta navegar para dentro da pasta bin do cassandra novamente e executar o comando:
-
-     ```console
-     user@user:~$ cqlsh.bat
-     ```
-
-6. Importe os dados para simular a carga do banco:
+7. Importe os dados para simular a carga do banco:
     - A carga de dados em data.scv possui um milhão de linhas para serem importadas.
        
     ```SQl
     cqlsh> USE ep9cas001;
-    cqlsh:ep9cas001> COPY "ep9cas001"."tb_user"(id, name, gender, birthday, city) FROM '/cassandra-stress/data.csv' WITH DELIMITER = ',' AND HEADER = TRUE;
+    cqlsh:ep9cas001> COPY "ep9cas001"."tb_user"(id, name, gender, birthday, city) FROM '/home/data.csv' WITH DELIMITER = ',' AND HEADER = TRUE;
     ```
    
     - Se a importação for realizada com sucesso, aparece a seguinte mensagem:
@@ -56,5 +61,4 @@
     ```
     
     - O passo da importação dos dados deve ser realizada anteriormente ao subir a aplicação pelo fato
-    de configurarmos a ação de esquema para recriar a keyspace ao executar a mesma.
-    
+    de configurarmos `schema-action` para recriar a keyspace ao executar a mesma.
