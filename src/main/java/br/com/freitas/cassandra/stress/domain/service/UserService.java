@@ -20,6 +20,10 @@ public class UserService {
         return this.userRepository.findAll();
     }
 
+    public Long getCount() {
+        return this.userRepository.count();
+    }
+
     public List<User> getUsers(Map<String, Object> map) {
         //TODO implementar filtros
         Iterable<User> users = this.userRepository.findAll();

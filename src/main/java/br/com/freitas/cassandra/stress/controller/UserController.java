@@ -25,6 +25,11 @@ public class UserController {
         return this.userService.getUsers();
     }
 
+    @GetMapping(value = "/count")
+    public Long getCount() {
+        return this.userService.getCount();
+    }
+
     @GetMapping(value = "/filters")
     public List<User> getUsers(
             @RequestParam(value = "id", required = false) String id,
