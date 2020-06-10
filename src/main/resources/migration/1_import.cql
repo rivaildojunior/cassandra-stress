@@ -1,9 +1,9 @@
 CREATE TABLE "ep9cas001"."tb_user"
 (
-    id       int,
+    id       uuid,
     name     text,
     gender   text,
-    birthday timestamp,
+    birthday date,
     city     text,
     
     PRIMARY KEY (id)

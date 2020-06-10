@@ -17,9 +17,7 @@ public class UserService {
     }
 
     public List<User> getUsers() {
-        Iterable<User> users = this.userRepository.findAll();
-
-        return this.getListFromIterator(users);
+        return this.userRepository.findAll();
     }
 
     public List<User> getUsers(Map<String, Object> map) {

@@ -27,7 +27,7 @@ public class UserController {
 
     @GetMapping(value = "/filters")
     public List<User> getUsers(
-            @RequestParam(value = "id", required = false) Integer id,
+            @RequestParam(value = "id", required = false) String id,
             @RequestParam(value = "name", required = false) String name,
             @RequestParam(value = "gender", required = false) String gender,
             @RequestParam(value = "birthday", required = false) String birthday,
@@ -39,7 +39,7 @@ public class UserController {
     }
 
     public Map<String, Object> getMapFilters(
-            Integer id,
+            String id,
             String name,
             String gender,
             String birthday,
