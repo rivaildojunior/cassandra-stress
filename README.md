@@ -1,9 +1,14 @@
 # Cassandra Stress 
 
-1. Faça instalação do Cassandra:
+1. Pré-requisitos:
+
+    -  OpenJDK 8 ou Oracle Java Platform, Standard Edition 8 (JDK).
+    -  Python 2.7 para uso do cqlsh.
+    
+2. Faça instalação do Cassandra:
 `https://cassandra.apache.org/download/`
 
-2. Iniciar o servidor do Cassandra:
+3. Iniciar o servidor do Cassandra:
     - Navegar pelo prompt de comando até a pasta do cassandra e depois para dentro da pasta bin usando o 
       comando cd. Após entrar na pasta bin do cassandra basta digitar.
 
@@ -14,7 +19,7 @@
    - Após executar o comando o servidor estaria ligado e você deve manter a janela do prompt de comando aberta. 
      Caso você fechar a janela do prompt de comando, o servidor sera desligado.  
 
-3. Subindo a aplicação:
+4. Subindo a aplicação:
    - Basta clonar o projeto:
    
      ```console
@@ -28,14 +33,14 @@
      user@user:~$ mvn clean install
      ```
         
-4. Para poder administrar o banco de dados:
+5. Para poder administrar o banco de dados:
    - Basta navegar para dentro da basta bin do cassandra novamente e executar o comando:
 
      ```console
      user@user:~$ cqlsh.bat
      ```
 
-5. Importe os dados para simular a carga do banco de dados:
+6. Importe os dados para simular a carga do banco de dados:
 
     ```SQl
     cqlsh> USE ep9cas001;
@@ -51,3 +56,4 @@
     
     - O passo da importação dos dados deve ser realizada anteriormente ao subir a aplicação pelo fato
     de configurarmos a ação de esquema para recriar a keyspace toda vez que a aplicação sobe.
+    
