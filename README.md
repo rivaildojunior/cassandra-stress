@@ -47,7 +47,7 @@
     
     - Primeiro precisamos copiar os dados de `data.csv` para o container:
       ```console
-      user@user:~$ docker cp `caminho completo`/cassandra-stress/data.csv demo-dse:/home/data.csv 
+      user@user:~$ docker cp C:\Users\Zupper\Downloads\poc-itau\data.csv demo-dse:/home/data.csv 
       ```
       
     - Com os dados no container execute:
