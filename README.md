@@ -7,7 +7,7 @@
     
 2. Crie um container DSE com a Pesquisa ativada:
       ```console
-      user@user:~$ docker run -e DS_LICENSE=accept --name demo-dse -p 9042:9042 -d datastax/dse-server:6.8.0-ubi7 -R
+      user@user:~$ docker run -e DS_LICENSE=accept --name demo-dse -p 9042:9042 -d datastax/dse-server:6.8.0-ubi7 -s -R
       ```
 
     - Mais orientações podem ser encontradas [Aqui](https://hub.docker.com/r/datastax/dse-server)
@@ -23,13 +23,13 @@
       ```console
       user@user:~$ docker exec -it demo-dse cqlsh
       ```
-     
+   
 5. Criando keyspace:
       ```SQl
       cqlsh> CREATE KEYSPACE IF NOT EXISTS ep9cas001 WITH REPLICATION = { 'class' : 'NetworkTopologyStrategy', 'dc1' : 2 };
       cqlsh> USE ep9cas001;
       ```        
-   
+
 6. Subindo a aplicação:
    - Basta clonar o projeto:
      ```console
@@ -64,3 +64,9 @@
     
     - O passo da importação dos dados deve ser realizada anteriormente ao subir a aplicação pelo fato
     de configurarmos `schema-action` para recriar a keyspace ao executar a mesma.
+
+8. Criando os índices de pesquisa:
+    ```SQl
+    cqlsh> USE ep9cas001;
+    cqlsh:ep9cas001> CREATE SEARCH INDEX IF NOT EXISTS ON ep9cas001.tb_user WITH COLUMNS name, gender, birthday, city {excluded : false};
+    ```
