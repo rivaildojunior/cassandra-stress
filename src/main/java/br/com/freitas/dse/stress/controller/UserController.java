@@ -50,7 +50,7 @@ public class UserController {
             String birthday,
             String city
     ) {
-        Map<String, Object> map = new HashMap<>();
+        //     Map<String, Object> map = new HashMap<>();
         Map<String, Object> filters = new HashMap<>();
 
         filters.put("id", id);
@@ -59,8 +59,8 @@ public class UserController {
         filters.put("birthday", birthday);
         filters.put("city", city);
 
-        map.put("filters", filters);
+    //    map.put("filters", filters);
 
-        return map;
+        return filters;
     }
 }

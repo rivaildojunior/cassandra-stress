@@ -25,10 +25,11 @@ public class UserService {
     }
 
     public List<User> getUsers(Map<String, Object> map) {
-        //TODO implementar filtros
-        Iterable<User> users = this.userRepository.findAll();
-
-        return this.getListFromIterator(users);
+         //TODO implementar filtros
+    	return this.userRepository.getQuery(map);
+//        Iterable<User> users = this.userRepository.findAll();
+//
+//        return this.getListFromIterator(users);
     }
 
     private List<User> getListFromIterator(Iterable<User> iterable) {
