@@ -1,13 +1,16 @@
 package br.com.freitas.dse.stress.domain.repository;
 
-import br.com.freitas.dse.stress.domain.model.User;
-import com.datastax.driver.core.querybuilder.QueryBuilder;
-import com.datastax.driver.core.querybuilder.Select;
+import java.time.LocalDate;
+import java.util.List;
+import java.util.Map;
+
 import org.springframework.data.cassandra.core.CassandraOperations;
 import org.springframework.stereotype.Repository;
 
-import java.util.List;
-import java.util.Map;
+import com.datastax.driver.core.querybuilder.QueryBuilder;
+import com.datastax.driver.core.querybuilder.Select;
+
+import br.com.freitas.dse.stress.domain.model.User;
 
 @Repository
 public class UserCustomRepositoryImpl implements UserCustomRepository {
@@ -23,10 +26,11 @@ public class UserCustomRepositoryImpl implements UserCustomRepository {
 
         filtro.forEach((chave, valor) -> {
             if (valor != null) {
-                select.and(QueryBuilder.eq(chave, valor));
+				select.and(QueryBuilder.eq(chave, valor));
             }
         });
 
-        return this.cqlTemplate.select(select, User.class);
+        List<User> users = this.cqlTemplate.select(select, User.class);
+        return users;
     }
 }
