@@ -61,7 +61,7 @@
     - Com os dados no container execute:
       ```CQL
       cqlsh> USE ep9cas001;
-      cqlsh:ep9cas001> COPY "ep9cas001"."tb_user"(id, name, gender, birthday, city) FROM '/home/data.csv' WITH DELIMITER = ',' AND HEADER = TRUE;
+      cqlsh:ep9cas001> COPY ep9cas001.tb_user(id, name, gender, birthday, city) FROM '/home/data.csv' WITH DELIMITER = ',' AND HEADER = TRUE;
       ```
    
     - Se a importação for realizada com sucesso, aparece a seguinte mensagem:
@@ -78,9 +78,31 @@
     cqlsh> USE ep9cas001;
     cqlsh:ep9cas001> CREATE SEARCH INDEX IF NOT EXISTS ON ep9cas001.tb_user WITH COLUMNS name {docValues:true}, gender {docValues:true}, birthday {docValues:true}, city {docValues:true, excluded : false};
     ```
-   
-    - Exemplo de Query Solr:
+
+8. Exemplo de Requisição:   
+    - Range de data começando da página 0 com 10 objetos: [link](http://localhost:8080/users/filters?birthday_ini=2019-01-13&birthday_end=2020-02-20&start=0&size=10)
+              
+9. Filtre uma consulta CQL usando a solr_query:   
+    - Exemplo de Query Solr para ordenação de campo com `docValues:true`:
         ```CQL
-        cqlsh:ep9cas001> SELECT id FROM ep9cas001.tb_user WHERE solr_query='{"q":"*:*", "sort":"id asc"}' LIMIT 10;
+        cqlsh:ep9cas001> SELECT * FROM ep9cas001.tb_user WHERE solr_query='{"q":"*:*", "sort":"name asc"}' LIMIT 10;
         ```
     
+    - Exemplo de Query Solr para buscas de campos compostos:  
+        ```CQL
+        cqlsh:ep9cas001> SELECT * FROM ep9cas001.tb_user where solr_query='{"q":"*:*", "fq":"name:Gordon\\ Sanders"}' LIMIT 1;
+        ```      
+
+    - Exemplo de Query Solr para range de datas:  
+        ```CQL
+        cqlsh:ep9cas001> SELECT * FROM ep9cas001.tb_user WHERE solr_query = 'birthday:[2014-06-15T00:00:00Z TO 2017-02-02T00:00:00Z]';
+        ```     
+      
+    - Exemplo de Query Solr para paginação:  
+        ```CQL
+        cqlsh:ep9cas001> SELECT * FROM ep9cas001.tb_user WHERE solr_query='{"q": "gender:Male", "start":"0"}' LIMIT 10;
+        ```      
+          
+        ```CQL
+        cqlsh:ep9cas001> SELECT * FROM ep9cas001.tb_user WHERE solr_query='{"q": "gender:Male", "start":"10"}' LIMIT 10;
+        ```                 

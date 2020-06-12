@@ -1,11 +1,6 @@
 package br.com.freitas.dse.stress.domain.repository;
 
-import java.time.LocalDate;
-import java.time.ZoneId;
-import java.time.format.DateTimeFormatter;
-import java.util.Date;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
 
 import org.springframework.data.cassandra.core.CassandraOperations;
@@ -18,60 +13,129 @@ import br.com.freitas.dse.stress.domain.model.User;
 
 @Repository
 public class UserCustomRepositoryImpl implements UserCustomRepository {
+    private final CassandraOperations cqlTemplate;
+    private String query = "";
 
-	private final CassandraOperations cqlTemplate;
-	private String where = "";
+    public UserCustomRepositoryImpl(CassandraOperations cqlTemplate) {
+        this.cqlTemplate = cqlTemplate;
+    }
 
-	public UserCustomRepositoryImpl(CassandraOperations cqlTemplate) {
-		this.cqlTemplate = cqlTemplate;
-	}
+    public List<User> getQuery(Map<String, Object> filters, String order, Integer start, Integer size) {
+        Select.Where select = QueryBuilder.select().from("tb_user").where();
+        query = "";
 
-	public List<User> getQuery(Map<String, Object> filtro, String order, Integer start, Integer size) {
-		Select.Where select = QueryBuilder.select().from("tb_user").where();
-		where = "";
+        filters.forEach((key, value) -> {
+            if (value != null) {
+                if (key.equals("birthday_ini")) {
+                    query = this.getQueryForBirthdayIni(query, value);
+                    return;
+                }
 
-		filtro.forEach((key, value) -> {
-			if (value != null) {
-				if (key.equals("birthday_ini")) {
-					where = where + "\"fq\":\"birthday:[" +  value.toString() + "T00:00:00Z";
-					// select.and(QueryBuilder.gte("birthday", this.convertToDate(value)));
-					// return;
-				} else
+                if (key.equals("birthday_end")) {
+                    query = this.getQueryForBirthdayEnd(query, value);
+                    return;
+                }
 
-				if (key.equals("birthday_end")) {
-					where = where + " TO " + value + "T00:00:00Z]\"";
-					// return;
-				} else {
-					where = where + "\"fq\":\"" + key + ":" + value + "\"";
-				}
+                query = this.getQueryForOtherFilters(query, key, value);
+            }
+        });
 
-				// select.and(QueryBuilder.eq(key, value));
-			}
-			// ""fq":"birthday:[2016-03-15T00:00:00Z TO 2017-02-01T00:00:00Z]"
-		});
+        select = this.getWhere(order, start, select);
 
-		if (order != null) {
-			if (!where.equals("")) {
-				select.and(QueryBuilder.eq("solr_query",
-						"{\"q\":\"*:*\", \"start\":\"" + start + "\"," + where + ", \"sort\":\"" + order + " asc\"}"));
-			} else {
-				select.and(QueryBuilder.eq("solr_query",
-						"{\"q\":\"*:*\", \"start\":\"" + start + "\", \"sort\":\"" + order + " asc\"}"));
-			}
-		} else {
-			if (!where.equals("")) {
-				select.and(QueryBuilder.eq("solr_query", "{\"q\":\"*:*\", \"start\":\"" + start + "\"," + where + "}"));
-			} else {
-				select.and(QueryBuilder.eq("solr_query", "{\"q\":\"*:*\", \"start\":\"" + start + "\"}"));
-			}
-		}
-		select.limit(size);
-		return this.cqlTemplate.select(select, User.class);
-	}
+        if (size != null) {
+            select.limit(size);
+        }
 
-	private Date convertToDate(Object Object) {
-		LocalDate date = (LocalDate) Object;
+        return this.cqlTemplate.select(select, User.class);
+    }
 
-		return Date.from(date.atStartOfDay().atZone(ZoneId.of("GMT")).toInstant());
-	}
+    private Select.Where getWhere(String order, Integer start, Select.Where select) {
+        if (start == null) {
+            start = 0;
+        }
+
+        if (order != null) {
+            return this.getSelectWithSorting(select, order, start);
+        }
+
+        return this.getSelectWithoutSorting(select, start);
+    }
+
+    private Select.Where getSelectWithSorting(Select.Where select, String order, Integer start) {
+        if (!query.equals("")) {
+            return select.and(QueryBuilder.eq("solr_query", this.getQueryOrderBy(query, start, order)));
+        }
+
+        return select.and(QueryBuilder.eq("solr_query", this.getQueryOrderByAndAllFields(start, order)));
+    }
+
+    private Select.Where getSelectWithoutSorting(Select.Where select, Integer start) {
+        if (!query.equals("")) {
+            return select.and(QueryBuilder.eq("solr_query", this.getQuery(query, start)));
+        }
+
+        return select.and(QueryBuilder.eq("solr_query", this.getQueryForAllFields(start)));
+    }
+
+    private String getQueryForOtherFilters(String query, String key, Object value) {
+        return new StringBuilder(query)
+                .append("\"fq\":\"")
+                .append(key)
+                .append(":")
+                .append(value.toString())
+                .append("\"")
+                .toString();
+    }
+
+    private String getQueryForBirthdayIni(String query, Object birthdayIni) {
+        return new StringBuilder(query)
+                .append("\"fq\":\"birthday:[")
+                .append(birthdayIni.toString())
+                .append("T00:00:00Z")
+                .toString();
+    }
+
+    private String getQueryForBirthdayEnd(String query, Object birthdayEnd) {
+        return new StringBuilder(query)
+                .append(" TO ")
+                .append(birthdayEnd.toString())
+                .append("T00:00:00Z]\"")
+                .toString();
+    }
+
+    private String getQueryOrderBy(String query, Integer start, String fieldOrder) {
+        return new StringBuilder("{\"q\":\"*:*\", \"start\":\"")
+                .append(start)
+                .append("\",")
+                .append(query)
+                .append(", \"sort\":\"")
+                .append(fieldOrder)
+                .append(" asc\"}")
+                .toString();
+    }
+
+    private String getQueryOrderByAndAllFields(Integer start, String fieldOrder) {
+        return new StringBuilder("{\"q\":\"*:*\", \"start\":\"")
+                .append(start)
+                .append("\", \"sort\":\"")
+                .append(fieldOrder)
+                .append(" asc\"}")
+                .toString();
+    }
+
+    private String getQuery(String query, Integer start) {
+        return new StringBuilder("{\"q\":\"*:*\", \"start\":\"")
+                .append(start)
+                .append("\",")
+                .append(query)
+                .append("}")
+                .toString();
+    }
+
+    private String getQueryForAllFields(Integer start) {
+        return new StringBuilder("{\"q\":\"*:*\", \"start\":\"")
+                .append(start)
+                .append("\"}")
+                .toString();
+    }
 }
