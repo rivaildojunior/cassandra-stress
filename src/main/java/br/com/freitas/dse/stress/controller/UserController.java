@@ -42,12 +42,12 @@ public class UserController {
             @RequestParam(value = "birthday_end", required = false) @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate birthdayEnd,
             @RequestParam(value = "city", required = false) String city,
             @RequestParam(value = "order", required = false) String order,
-            @RequestParam(value = "start", required = false) Integer start,
-            @RequestParam(value = "size") Integer size
+            @RequestParam(value = "page", required = false) Integer page,
+            @RequestParam(value = "size",  required = false) Integer size
     ) {
         Map<String, Object> filters = this.getMapFilters(id, name, gender, birthdayIni, birthdayEnd, city);
 
-        return this.userService.getUsers(filters, order, start, size);
+        return this.userService.getUsers(filters, order, page, size);
     }
 
     public Map<String, Object> getMapFilters(

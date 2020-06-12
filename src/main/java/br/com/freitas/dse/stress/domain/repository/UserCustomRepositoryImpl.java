@@ -14,13 +14,14 @@ import br.com.freitas.dse.stress.domain.model.User;
 @Repository
 public class UserCustomRepositoryImpl implements UserCustomRepository {
     private final CassandraOperations cqlTemplate;
+    private final Integer DEFAULT_SIZE = 10;
     private String query = "";
 
     public UserCustomRepositoryImpl(CassandraOperations cqlTemplate) {
         this.cqlTemplate = cqlTemplate;
     }
 
-    public List<User> getQuery(Map<String, Object> filters, String order, Integer start, Integer size) {
+    public List<User> findUserByFilters(Map<String, Object> filters, String order, Integer page, Integer size) {
         Select.Where select = QueryBuilder.select().from("tb_user").where();
         query = "";
 
@@ -36,11 +37,11 @@ public class UserCustomRepositoryImpl implements UserCustomRepository {
                     return;
                 }
 
-                query = this.getQueryForOtherFilters(query, key, value);
+                query = this.getQueryForOtherFilters(query, key, this.getValue(value));
             }
         });
 
-        select = this.getWhere(order, start, select);
+        select = this.getWhere(select, order, page, size);
 
         if (size != null) {
             select.limit(size);
@@ -49,10 +50,16 @@ public class UserCustomRepositoryImpl implements UserCustomRepository {
         return this.cqlTemplate.select(select, User.class);
     }
 
-    private Select.Where getWhere(String order, Integer start, Select.Where select) {
-        if (start == null) {
-            start = 0;
+    private Select.Where getWhere(Select.Where select, String order, Integer page, Integer size) {
+        if (page == null) {
+            page = 0;
         }
+
+        if (size == null) {
+            size = DEFAULT_SIZE;
+        }
+
+        Integer start = page * size;
 
         if (order != null) {
             return this.getSelectWithSorting(select, order, start);
@@ -137,5 +144,27 @@ public class UserCustomRepositoryImpl implements UserCustomRepository {
                 .append(start)
                 .append("\"}")
                 .toString();
+    }
+
+    private String getValue(Object obj) {
+        String str = String.valueOf(obj);
+        String[] words = str.split(" ");
+
+        if (words.length > 1) {
+            StringBuilder sb = new StringBuilder();
+
+            for (int i = 0; i < words.length; i++) {
+                if (i == words.length - 1) {
+                    sb.append(words[i]);
+                    continue;
+                }
+
+                sb.append(words[i]).append("\\ ");
+            }
+
+            return sb.toString();
+        }
+
+        return str;
     }
 }

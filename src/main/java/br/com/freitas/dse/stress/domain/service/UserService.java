@@ -23,7 +23,7 @@ public class UserService {
         return this.userRepository.count();
     }
 
-    public List<User> getUsers(Map<String, Object> filters, String order, Integer start, Integer size) {
-        return this.userRepository.getQuery(filters, order, start, size);
+    public List<User> getUsers(Map<String, Object> filters, String order, Integer page, Integer size) {
+        return this.userRepository.findUserByFilters(filters, order, page, size);
     }
 }
