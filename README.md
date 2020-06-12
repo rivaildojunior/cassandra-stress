@@ -33,7 +33,7 @@
       ```
    
 4. Criando keyspace:
-      ```SQl
+      ```CQL
       cqlsh> CREATE KEYSPACE IF NOT EXISTS ep9cas001 WITH REPLICATION = { 'class' : 'NetworkTopologyStrategy', 'dc1' : 2 };
       cqlsh> USE ep9cas001;
       ```        
@@ -55,11 +55,11 @@
     
     - Primeiro precisamos copiar os dados de `data.csv` para o container:
       ```console
-      user@user:~$ docker cp C:\Users\Zupper\Downloads\poc-itau\data.csv demo-dse:/home/data.csv 
+      user@user:~$ docker cp `caminho completo`/cassandra-stress/data.csv demo-dse:/home/data.csv 
       ```
       
     - Com os dados no container execute:
-      ```SQl
+      ```CQL
       cqlsh> USE ep9cas001;
       cqlsh:ep9cas001> COPY "ep9cas001"."tb_user"(id, name, gender, birthday, city) FROM '/home/data.csv' WITH DELIMITER = ',' AND HEADER = TRUE;
       ```
@@ -74,10 +74,13 @@
     de configurarmos `schema-action` para recriar a keyspace ao executar a mesma.
 
 7. Criando os índices de pesquisa:
-    ```SQl
+    ```CQL
     cqlsh> USE ep9cas001;
     cqlsh:ep9cas001> CREATE SEARCH INDEX IF NOT EXISTS ON ep9cas001.tb_user WITH COLUMNS name, gender, birthday, city {excluded : false};
     ```
    
-   
-   
+    - Exemplo de Query Solr:
+        ```CQL
+        cqlsh:ep9cas001> SELECT id FROM "ep9cas001"."tb_user" WHERE solr_query='{"q":"*:*", "sort":"id asc"}' LIMIT 10;
+        ```
+    

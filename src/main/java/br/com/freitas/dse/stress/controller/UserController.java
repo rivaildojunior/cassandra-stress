@@ -37,11 +37,11 @@ public class UserController {
             @RequestParam(value = "id", required = false) String id,
             @RequestParam(value = "name", required = false) String name,
             @RequestParam(value = "gender", required = false) String gender,
-            @RequestParam(value = "birthdayIni", required = false) @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate birthdayIni,
-            @RequestParam(value = "birthdayFim", required = false) @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate birthdayFim,
+            @RequestParam(value = "birthday_ini", required = false) @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate birthdayIni,
+            @RequestParam(value = "birthday_end", required = false) @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate birthdayEnd,
             @RequestParam(value = "city", required = false) String city
     ) {
-        Map<String, Object> map = this.getMapFilters(id, name, gender, birthdayIni, birthdayFim, city);
+        Map<String, Object> map = this.getMapFilters(id, name, gender, birthdayIni, birthdayEnd, city);
 
         return this.userService.getUsers(map);
     }
@@ -59,8 +59,8 @@ public class UserController {
         filters.put("id", id);
         filters.put("name", name);
         filters.put("gender", gender);
-        filters.put("birthdayIni", birthdayIni);
-        filters.put("birthdayFim", birthdayFim);
+        filters.put("birthday_ini", birthdayIni);
+        filters.put("birthday_end", birthdayFim);
         filters.put("city", city);
 
         return filters;
