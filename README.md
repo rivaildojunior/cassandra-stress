@@ -81,6 +81,6 @@
    
     - Exemplo de Query Solr:
         ```CQL
-        cqlsh:ep9cas001> SELECT id FROM "ep9cas001"."tb_user" WHERE solr_query='{"q":"*:*", "sort":"id asc"}' LIMIT 10;
+        cqlsh:ep9cas001> SELECT id FROM ep9cas001.tb_user WHERE solr_query='{"q":"*:*", "sort":"id asc"}' LIMIT 10;
         ```
     

@@ -24,30 +24,29 @@ public class UserCustomRepositoryImpl implements UserCustomRepository {
     }
 
     public List<User> getQuery(Map<String, Object> filtro, String order) {
-        Select.Where select = QueryBuilder.select().from("tb_user")
-                .where();
+        Select.Where select = QueryBuilder.select().from("tb_user").where();
 
-        filtro.forEach((chave, valor) -> {
-            if (valor != null) {
-                if (chave.equals("birthday_ini")) {
-                    select.and(QueryBuilder.gte("birthday", this.convertToDate(valor)));
+        filtro.forEach((key, value) -> {
+            if (value != null) {
+                if (key.equals("birthday_ini")) {
+                    select.and(QueryBuilder.gte("birthday", this.convertToDate(value)));
                     return;
                 }
 
-                if (chave.equals("birthday_end")) {
-                    select.and(QueryBuilder.lte("birthday", this.convertToDate(valor)));
+                if (key.equals("birthday_end")) {
+                    select.and(QueryBuilder.lte("birthday", this.convertToDate(value)));
                     return;
                 }
 
-                select.and(QueryBuilder.eq(chave, valor));
-               
+                select.and(QueryBuilder.eq(key, value));
             }
         });
-        
-        
-        select.orderBy(QueryBuilder.asc(order));
-        List<User> s = this.cqlTemplate.select(select, User.class);
-		return s;
+
+        if (order != null) {
+            select.orderBy(QueryBuilder.asc(order));
+        }
+
+        return this.cqlTemplate.select(select, User.class);
     }
 
     private Date convertToDate(Object Object) {
@@ -57,5 +56,4 @@ public class UserCustomRepositoryImpl implements UserCustomRepository {
                 .atZone(ZoneId.of("GMT"))
                 .toInstant());
     }
-    
 }
