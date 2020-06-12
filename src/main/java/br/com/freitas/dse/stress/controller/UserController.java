@@ -44,10 +44,10 @@ public class UserController {
             @RequestParam(value = "order", required = false) String order,
             @RequestParam(value = "start") Integer start,
             @RequestParam(value = "size") Integer size
-          ) {
-        Map<String, Object> map = this.getMapFilters(id, name, gender, birthdayIni, birthdayEnd, city);
+    ) {
+        Map<String, Object> filters = this.getMapFilters(id, name, gender, birthdayIni, birthdayEnd, city);
 
-        return this.userService.getUsers(map, order, start, size);
+        return this.userService.getUsers(filters, order, start, size);
     }
 
     public Map<String, Object> getMapFilters(
