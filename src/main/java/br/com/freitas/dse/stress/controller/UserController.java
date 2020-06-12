@@ -37,10 +37,11 @@ public class UserController {
             @RequestParam(value = "id", required = false) String id,
             @RequestParam(value = "name", required = false) String name,
             @RequestParam(value = "gender", required = false) String gender,
-            @RequestParam(value = "birthday", required = false) @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate birthday,
+            @RequestParam(value = "birthdayIni", required = false) @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate birthdayIni,
+            @RequestParam(value = "birthdayFim", required = false) @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate birthdayFim,
             @RequestParam(value = "city", required = false) String city
     ) {
-        Map<String, Object> map = this.getMapFilters(id, name, gender, birthday, city);
+        Map<String, Object> map = this.getMapFilters(id, name, gender, birthdayIni, birthdayFim, city);
 
         return this.userService.getUsers(map);
     }
@@ -49,7 +50,8 @@ public class UserController {
             String id,
             String name,
             String gender,
-            LocalDate birthday,
+            LocalDate birthdayIni,
+            LocalDate birthdayFim,
             String city
     ) {
         Map<String, Object> filters = new HashMap<>();
@@ -57,7 +59,8 @@ public class UserController {
         filters.put("id", id);
         filters.put("name", name);
         filters.put("gender", gender);
-        filters.put("birthday", birthday);
+        filters.put("birthdayIni", birthdayIni);
+        filters.put("birthdayFim", birthdayFim);
         filters.put("city", city);
 
         return filters;
