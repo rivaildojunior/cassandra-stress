@@ -7,5 +7,5 @@ import java.util.Map;
 
 
 public interface UserCustomRepository {
-    List<User> getQuery(Map<String, Object> filtro);
+    List<User> getQuery(Map<String, Object> filtro, String order);
 }

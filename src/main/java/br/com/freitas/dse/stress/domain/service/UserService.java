@@ -23,7 +23,7 @@ public class UserService {
         return this.userRepository.count();
     }
 
-    public List<User> getUsers(Map<String, Object> map) {
-        return this.userRepository.getQuery(map);
+    public List<User> getUsers(Map<String, Object> map, String order) {
+        return this.userRepository.getQuery(map, order);
     }
 }
