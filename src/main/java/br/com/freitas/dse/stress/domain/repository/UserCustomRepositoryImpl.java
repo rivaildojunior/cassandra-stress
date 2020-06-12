@@ -1,16 +1,16 @@
 package br.com.freitas.dse.stress.domain.repository;
 
-import java.time.LocalDate;
-import java.util.List;
-import java.util.Map;
-
+import br.com.freitas.dse.stress.domain.model.User;
+import com.datastax.driver.core.querybuilder.QueryBuilder;
+import com.datastax.driver.core.querybuilder.Select;
 import org.springframework.data.cassandra.core.CassandraOperations;
 import org.springframework.stereotype.Repository;
 
-import com.datastax.driver.core.querybuilder.QueryBuilder;
-import com.datastax.driver.core.querybuilder.Select;
-
-import br.com.freitas.dse.stress.domain.model.User;
+import java.time.LocalDate;
+import java.time.ZoneId;
+import java.util.Date;
+import java.util.List;
+import java.util.Map;
 
 @Repository
 public class UserCustomRepositoryImpl implements UserCustomRepository {
@@ -26,11 +26,23 @@ public class UserCustomRepositoryImpl implements UserCustomRepository {
 
         filtro.forEach((chave, valor) -> {
             if (valor != null) {
-				select.and(QueryBuilder.eq(chave, valor));
+                if (chave.equals("birthday")) {
+                    select.and(QueryBuilder.eq(chave, this.convertToDate(valor)));
+                    return;
+                }
+
+                select.and(QueryBuilder.eq(chave, valor));
             }
         });
 
-        List<User> users = this.cqlTemplate.select(select, User.class);
-        return users;
+        return this.cqlTemplate.select(select, User.class);
+    }
+
+    private Date convertToDate(Object Object) {
+        LocalDate date = (LocalDate) Object;
+
+        return Date.from(date.atStartOfDay()
+                .atZone(ZoneId.of("GMT"))
+                .toInstant());
     }
 }
