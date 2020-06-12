@@ -1,17 +1,18 @@
 package br.com.freitas.dse.stress.controller;
 
-import br.com.freitas.dse.stress.domain.model.User;
-import br.com.freitas.dse.stress.domain.service.UserService;
+import java.time.LocalDate;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.time.LocalDate;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import br.com.freitas.dse.stress.domain.model.User;
+import br.com.freitas.dse.stress.domain.service.UserService;
 
 @RestController
 @RequestMapping("/users")
@@ -57,7 +58,7 @@ public class UserController {
             LocalDate birthdayFim,
             String city
     ) {
-        Map<String, Object> filters = new HashMap<>();
+        Map<String, Object> filters = new LinkedHashMap<>();
 
         filters.put("id", id);
         filters.put("name", name);
