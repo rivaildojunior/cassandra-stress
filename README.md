@@ -76,11 +76,11 @@
 7. Criando os índices de pesquisa:
     ```CQL
     cqlsh> USE ep9cas001;
-    cqlsh:ep9cas001> CREATE SEARCH INDEX IF NOT EXISTS ON ep9cas001.tb_user WITH COLUMNS name, gender, birthday, city {excluded : false};
+    cqlsh:ep9cas001> CREATE SEARCH INDEX IF NOT EXISTS ON ep9cas001.tb_user WITH COLUMNS name {docValues:true}, gender {docValues:true}, birthday {docValues:true}, city {docValues:true, excluded : false};
     ```
    
     - Exemplo de Query Solr:
         ```CQL
-        cqlsh:ep9cas001> SELECT id FROM "ep9cas001"."tb_user" WHERE solr_query='{"q":"*:*", "sort":"id asc"}' LIMIT 10;
+        cqlsh:ep9cas001> SELECT id FROM ep9cas001.tb_user WHERE solr_query='{"q":"*:*", "sort":"id asc"}' LIMIT 10;
         ```
     
