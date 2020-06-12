@@ -1,9 +1,10 @@
 package br.com.freitas.dse.stress.domain.model;
 
 
-import java.time.LocalDate;
-import java.util.UUID;
-
+import com.datastax.driver.core.DataType;
+import lombok.Builder;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
 import org.springframework.data.cassandra.core.cql.Ordering;
 import org.springframework.data.cassandra.core.cql.PrimaryKeyType;
 import org.springframework.data.cassandra.core.mapping.CassandraType;
@@ -11,11 +12,8 @@ import org.springframework.data.cassandra.core.mapping.Column;
 import org.springframework.data.cassandra.core.mapping.PrimaryKeyColumn;
 import org.springframework.data.cassandra.core.mapping.Table;
 
-import com.datastax.driver.core.DataType;
-
-import lombok.Builder;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
+import java.util.Date;
+import java.util.UUID;
 
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
 @Builder
@@ -34,7 +32,7 @@ public class User {
     private String gender;
 
     @Column(value = "birthday")
-    private LocalDate birthday;
+    private Date birthday;
 
     @Column(value = "city")
     private String city;

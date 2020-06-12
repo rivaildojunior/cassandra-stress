@@ -2,11 +2,13 @@ package br.com.freitas.dse.stress.controller;
 
 import br.com.freitas.dse.stress.domain.model.User;
 import br.com.freitas.dse.stress.domain.service.UserService;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.time.LocalDate;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -35,7 +37,7 @@ public class UserController {
             @RequestParam(value = "id", required = false) String id,
             @RequestParam(value = "name", required = false) String name,
             @RequestParam(value = "gender", required = false) String gender,
-            @RequestParam(value = "birthday", required = false) String birthday,
+            @RequestParam(value = "birthday", required = false) @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate birthday,
             @RequestParam(value = "city", required = false) String city
     ) {
         Map<String, Object> map = this.getMapFilters(id, name, gender, birthday, city);
@@ -47,10 +49,9 @@ public class UserController {
             String id,
             String name,
             String gender,
-            String birthday,
+            LocalDate birthday,
             String city
     ) {
-        //     Map<String, Object> map = new HashMap<>();
         Map<String, Object> filters = new HashMap<>();
 
         filters.put("id", id);
@@ -58,8 +59,6 @@ public class UserController {
         filters.put("gender", gender);
         filters.put("birthday", birthday);
         filters.put("city", city);
-
-    //    map.put("filters", filters);
 
         return filters;
     }
