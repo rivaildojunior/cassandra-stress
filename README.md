@@ -79,7 +79,10 @@
     cqlsh:ep9cas001> CREATE SEARCH INDEX IF NOT EXISTS ON ep9cas001.tb_user WITH COLUMNS name {docValues:true}, gender {docValues:true}, birthday {docValues:true}, city {docValues:true, excluded : false};
     ```
 
-8. Filtre uma consulta CQL usando a solr_query:   
+8. Exemplo de Requisição:   
+    - Range de data começando da página 0 com 10 objetos: [link](http://localhost:8080/users/filters?birthday_ini=2019-01-13&birthday_end=2020-02-20&start=0&size=10)
+              
+9. Filtre uma consulta CQL usando a solr_query:   
     - Exemplo de Query Solr para ordenação de campo com `docValues:true`:
         ```CQL
         cqlsh:ep9cas001> SELECT * FROM ep9cas001.tb_user WHERE solr_query='{"q":"*:*", "sort":"name asc"}' LIMIT 10;

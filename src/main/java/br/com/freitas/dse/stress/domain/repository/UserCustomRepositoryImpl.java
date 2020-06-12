@@ -40,17 +40,25 @@ public class UserCustomRepositoryImpl implements UserCustomRepository {
             }
         });
 
-        if (order != null) {
-            select = this.getSelectWithSorting(select, order, start);
-        } else {
-            select = this.getSelectWithoutSorting(select, start);
-        }
+        select = this.getWhere(order, start, select);
 
         if (size != null) {
             select.limit(size);
         }
 
         return this.cqlTemplate.select(select, User.class);
+    }
+
+    private Select.Where getWhere(String order, Integer start, Select.Where select) {
+        if (start == null) {
+            start = 0;
+        }
+
+        if (order != null) {
+            return this.getSelectWithSorting(select, order, start);
+        }
+
+        return this.getSelectWithoutSorting(select, start);
     }
 
     private Select.Where getSelectWithSorting(Select.Where select, String order, Integer start) {
