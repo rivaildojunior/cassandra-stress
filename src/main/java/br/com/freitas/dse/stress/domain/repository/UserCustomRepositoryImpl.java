@@ -26,10 +26,14 @@ public class UserCustomRepositoryImpl implements UserCustomRepository {
 
         filtro.forEach((chave, valor) -> {
             if (valor != null) {
-                if (chave.equals("birthday")) {
-                    select.and(QueryBuilder.eq(chave, this.convertToDate(valor)));
-                    return;
-                }
+            	   if (chave.equals("birthdayIni")) {
+                       select.and(QueryBuilder.gte("birthday", this.convertToDate(valor)));
+                       return;
+                   }
+            	   if (chave.equals("birthdayFim")) {
+                       select.and(QueryBuilder.lte("birthday", this.convertToDate(valor)));
+                       return;
+                   }
 
                 select.and(QueryBuilder.eq(chave, valor));
             }
