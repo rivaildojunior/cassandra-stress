@@ -1,141 +1,118 @@
 package br.com.freitas.dse.stress.domain.repository;
 
-import java.util.List;
-import java.util.Map;
-
+import br.com.freitas.dse.stress.domain.model.User;
+import com.datastax.driver.core.querybuilder.QueryBuilder;
+import com.datastax.driver.core.querybuilder.Select;
+import org.json.JSONObject;
 import org.springframework.data.cassandra.core.CassandraOperations;
 import org.springframework.stereotype.Repository;
 
-import com.datastax.driver.core.querybuilder.QueryBuilder;
-import com.datastax.driver.core.querybuilder.Select;
-
-import br.com.freitas.dse.stress.domain.model.User;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 @Repository
 public class UserCustomRepositoryImpl implements UserCustomRepository {
     private final CassandraOperations cqlTemplate;
-    private String query = "";
 
     public UserCustomRepositoryImpl(CassandraOperations cqlTemplate) {
         this.cqlTemplate = cqlTemplate;
     }
 
-    public List<User> getQuery(Map<String, Object> filters, String order, Integer start, Integer size) {
+    public List<User> findUserByFilters(Map<String, Object> map, String asc, String desc, Integer page, Integer size) {
         Select.Where select = QueryBuilder.select().from("tb_user").where();
-        query = "";
 
-        filters.forEach((key, value) -> {
-            if (value != null) {
-                if (key.equals("birthday_ini")) {
-                    query = this.getQueryForBirthdayIni(query, value);
-                    return;
-                }
-
-                if (key.equals("birthday_end")) {
-                    query = this.getQueryForBirthdayEnd(query, value);
-                    return;
-                }
-
-                query = this.getQueryForOtherFilters(query, key, value);
-            }
-        });
-
-        select = this.getWhere(order, start, select);
+        Map<String, Object> filters = this.getMapForSolrQuery(map);
 
         if (size != null) {
             select.limit(size);
         }
 
+        if (desc != null) {
+            filters.put("sort", desc + " desc");
+        }
+
+        if (asc != null) {
+            filters.put("sort", asc + " asc");
+        }
+
+        filters.put("start", this.getPage(page, size));
+
+        JSONObject json = new JSONObject(filters);
+
+        select.and(QueryBuilder.eq("solr_query", json.toString()));
+
         return this.cqlTemplate.select(select, User.class);
     }
 
-    private Select.Where getWhere(String order, Integer start, Select.Where select) {
-        if (start == null) {
-            start = 0;
+    private Integer getPage(Integer page, Integer size) {
+        if (page == null) {
+            page = 0;
         }
 
-        if (order != null) {
-            return this.getSelectWithSorting(select, order, start);
+        if (size == null) {
+            size = 10;
         }
 
-        return this.getSelectWithoutSorting(select, start);
+        return page * size;
     }
 
-    private Select.Where getSelectWithSorting(Select.Where select, String order, Integer start) {
-        if (!query.equals("")) {
-            return select.and(QueryBuilder.eq("solr_query", this.getQueryOrderBy(query, start, order)));
+    private Map<String, Object> getMapForSolrQuery(Map<String, Object> filters) {
+        Map<String, Object> map = new HashMap<>();
+        List<String> fqs = new ArrayList<>();
+
+        map.put("q", "*:*");
+        map.put("fq", fqs);
+
+        if (filters.get("id") != null) {
+            map.put("fq", "id:" + filters.get("id"));
+            return map;
         }
 
-        return select.and(QueryBuilder.eq("solr_query", this.getQueryOrderByAndAllFields(start, order)));
-    }
-
-    private Select.Where getSelectWithoutSorting(Select.Where select, Integer start) {
-        if (!query.equals("")) {
-            return select.and(QueryBuilder.eq("solr_query", this.getQuery(query, start)));
+        if (filters.get("name") != null) {
+            fqs.add("name:" + this.getStrWithScape(filters.get("name")));
         }
 
-        return select.and(QueryBuilder.eq("solr_query", this.getQueryForAllFields(start)));
+        if (filters.get("gender") != null) {
+            fqs.add("gender:" + filters.get("gender"));
+        }
+
+        if (filters.get("birthday_ini") != null && filters.get("birthday_end") != null) {
+            StringBuilder sb = new StringBuilder("birthday:[")
+                    .append(filters.get("birthday_ini")).append("T00:00:00Z TO ")
+                    .append(filters.get("birthday_end"))
+                    .append("T00:00:00Z]");
+
+            fqs.add(sb.toString());
+        }
+
+        if (filters.get("city") != null) {
+            fqs.add("city:" + this.getStrWithScape(filters.get("city")));
+        }
+
+        return map;
     }
 
-    private String getQueryForOtherFilters(String query, String key, Object value) {
-        return new StringBuilder(query)
-                .append("\"fq\":\"")
-                .append(key)
-                .append(":")
-                .append(value.toString())
-                .append("\"")
-                .toString();
-    }
+    private String getStrWithScape(Object obj) {
+        String str = String.valueOf(obj);
+        String[] words = str.split(" ");
 
-    private String getQueryForBirthdayIni(String query, Object birthdayIni) {
-        return new StringBuilder(query)
-                .append("\"fq\":\"birthday:[")
-                .append(birthdayIni.toString())
-                .append("T00:00:00Z")
-                .toString();
-    }
+        if (words.length > 1) {
+            StringBuilder sb = new StringBuilder();
 
-    private String getQueryForBirthdayEnd(String query, Object birthdayEnd) {
-        return new StringBuilder(query)
-                .append(" TO ")
-                .append(birthdayEnd.toString())
-                .append("T00:00:00Z]\"")
-                .toString();
-    }
+            for (int i = 0; i < words.length; i++) {
+                if (i != words.length - 1) {
+                    sb.append(words[i]).append("\\ ");
+                    continue;
+                }
 
-    private String getQueryOrderBy(String query, Integer start, String fieldOrder) {
-        return new StringBuilder("{\"q\":\"*:*\", \"start\":\"")
-                .append(start)
-                .append("\",")
-                .append(query)
-                .append(", \"sort\":\"")
-                .append(fieldOrder)
-                .append(" asc\"}")
-                .toString();
-    }
+                sb.append(words[i]);
+            }
 
-    private String getQueryOrderByAndAllFields(Integer start, String fieldOrder) {
-        return new StringBuilder("{\"q\":\"*:*\", \"start\":\"")
-                .append(start)
-                .append("\", \"sort\":\"")
-                .append(fieldOrder)
-                .append(" asc\"}")
-                .toString();
-    }
+            return sb.toString();
+        }
 
-    private String getQuery(String query, Integer start) {
-        return new StringBuilder("{\"q\":\"*:*\", \"start\":\"")
-                .append(start)
-                .append("\",")
-                .append(query)
-                .append("}")
-                .toString();
-    }
-
-    private String getQueryForAllFields(Integer start) {
-        return new StringBuilder("{\"q\":\"*:*\", \"start\":\"")
-                .append(start)
-                .append("\"}")
-                .toString();
+        return str;
     }
 }
