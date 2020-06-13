@@ -22,6 +22,7 @@
         <cassandra-all.version>3.11.6</cassandra-all.version>
         <cassandra-migration.version>2.2.0</cassandra-migration.version>
         <metrics-core.version>3.1.0</metrics-core.version>
+        <json.version>20200518</json.version>
     </properties>
 
     <dependencies>
@@ -57,6 +58,12 @@
             <groupId>io.dropwizard.metrics</groupId>
             <artifactId>metrics-core</artifactId>
             <version>${metrics-core.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.json</groupId>
+            <artifactId>json</artifactId>
+            <version>${json.version}</version>
         </dependency>
 
         <dependency>
