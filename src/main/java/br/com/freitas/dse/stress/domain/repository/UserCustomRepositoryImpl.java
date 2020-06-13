@@ -1,6 +1,8 @@
 package br.com.freitas.dse.stress.domain.repository;
 
+import br.com.freitas.dse.stress.domain.model.Page;
 import br.com.freitas.dse.stress.domain.model.User;
+import br.com.freitas.dse.stress.domain.model.UserPageable;
 import com.datastax.driver.core.querybuilder.QueryBuilder;
 import com.datastax.driver.core.querybuilder.Select;
 import org.json.JSONObject;
@@ -20,14 +22,11 @@ public class UserCustomRepositoryImpl implements UserCustomRepository {
         this.cqlTemplate = cqlTemplate;
     }
 
-    public List<User> findUserByFilters(Map<String, Object> map, String asc, String desc, Integer page, Integer size) {
+    public UserPageable findUserByFilters(Map<String, Object> map, String asc, String desc, Integer page, Integer size) {
         Select.Where select = QueryBuilder.select().from("tb_user").where();
+        Select.Where count = QueryBuilder.select().countAll().from("tb_user").where();
 
         Map<String, Object> filters = this.getMapForSolrQuery(map);
-
-        if (size != null) {
-            select.limit(size);
-        }
 
         if (desc != null) {
             filters.put("sort", desc + " desc");
@@ -37,16 +36,25 @@ public class UserCustomRepositoryImpl implements UserCustomRepository {
             filters.put("sort", asc + " asc");
         }
 
-        filters.put("start", this.getPage(page, size));
+        count.and(QueryBuilder.eq("solr_query", new JSONObject(filters).toString()));
 
-        JSONObject json = new JSONObject(filters);
+        filters.put("start", this.getStart(page, size));
 
-        select.and(QueryBuilder.eq("solr_query", json.toString()));
+        if (size != null) {
+            select.limit(size);
+        }
 
-        return this.cqlTemplate.select(select, User.class);
+        select.and(QueryBuilder.eq("solr_query", new JSONObject(filters).toString()));
+
+        List<User> users = this.cqlTemplate.select(select, User.class);
+
+        return UserPageable.builder()
+                .page(this.getPage(users, page, size, count))
+                .users(users)
+                .build();
     }
 
-    private Integer getPage(Integer page, Integer size) {
+    private Integer getStart(Integer page, Integer size) {
         if (page == null) {
             page = 0;
         }
@@ -80,7 +88,8 @@ public class UserCustomRepositoryImpl implements UserCustomRepository {
 
         if (filters.get("birthday_ini") != null && filters.get("birthday_end") != null) {
             StringBuilder sb = new StringBuilder("birthday:[")
-                    .append(filters.get("birthday_ini")).append("T00:00:00Z TO ")
+                    .append(filters.get("birthday_ini"))
+                    .append("T00:00:00Z TO ")
                     .append(filters.get("birthday_end"))
                     .append("T00:00:00Z]");
 
@@ -92,6 +101,26 @@ public class UserCustomRepositoryImpl implements UserCustomRepository {
         }
 
         return map;
+    }
+
+    private Page getPage(List<User> users, Integer page, Integer size, Select.Where count) {
+        Integer rows = this.cqlTemplate.selectOne(count, Integer.class);
+        int numberOfPages = 0;
+
+        if (rows != null) {
+            numberOfPages = rows / size;
+        }
+
+        int previous = page == 0 ? 0 : page - 1;
+        Integer next = users.size() < size ? null : page + 1;
+
+        return Page.builder()
+                .previous(previous)
+                .current(page)
+                .next(next)
+                .size(users.size())
+                .numberOfPages(numberOfPages)
+                .build();
     }
 
     private String getStrWithScape(Object obj) {
