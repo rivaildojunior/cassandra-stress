@@ -7,8 +7,8 @@ import lombok.Data;
 @Data
 public class Page {
     private Integer size;
-    private Integer previous;
-    private Integer current;
-    private Integer next;
+    private String previous;
+    private String current;
+    private String next;
     private Integer numberOfPages;
 }

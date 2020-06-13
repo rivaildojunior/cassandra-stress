@@ -16,7 +16,11 @@ import java.util.Map;
 
 @Repository
 public class UserCustomRepositoryImpl implements UserCustomRepository {
-    private final CassandraOperations cqlTemplate;
+	private static final String URL_BASE = "/users/filters?page=";
+	private static final String SIZE = "&size=";
+	
+	private final CassandraOperations cqlTemplate;
+    private String filtro;
 
     public UserCustomRepositoryImpl(CassandraOperations cqlTemplate) {
         this.cqlTemplate = cqlTemplate;
@@ -49,7 +53,7 @@ public class UserCustomRepositoryImpl implements UserCustomRepository {
         List<User> users = this.cqlTemplate.select(select, User.class);
 
         return UserPageable.builder()
-                .page(this.getPage(users, page, size, count))
+                .page(this.getPage(users, page, size, count, map))
                 .users(users)
                 .build();
     }
@@ -103,7 +107,8 @@ public class UserCustomRepositoryImpl implements UserCustomRepository {
         return map;
     }
 
-    private Page getPage(List<User> users, Integer page, Integer size, Select.Where count) {
+    private Page getPage(List<User> users, Integer page, Integer size, Select.Where count, Map<String, Object> map) {
+    	this.filtro = "";
         Integer rows = this.cqlTemplate.selectOne(count, Integer.class);
         int numberOfPages = 0;
 
@@ -113,11 +118,17 @@ public class UserCustomRepositoryImpl implements UserCustomRepository {
 
         int previous = page == 0 ? 0 : page - 1;
         Integer next = users.size() < size ? null : page + 1;
+       
+        map.forEach((chave, valor) -> {
+        	if (valor != null) {
+    			this.filtro = this.filtro.equals("") ? this.filtro + chave +"="+ valor : this.filtro + "&" + chave +"="+ valor;
+        	}
+        });
 
         return Page.builder()
-                .previous(previous)
-                .current(page)
-                .next(next)
+                .previous(URL_BASE + previous + SIZE + size + "&" + this.filtro)
+                .current(URL_BASE + page + SIZE + size + "&" + this.filtro)
+                .next(URL_BASE + next + SIZE + size + "&" + this.filtro)
                 .size(users.size())
                 .numberOfPages(numberOfPages)
                 .build();
