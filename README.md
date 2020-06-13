@@ -117,3 +117,26 @@
         ```CQL
         cqlsh:ep9cas001> SELECT * FROM ep9cas001.tb_user WHERE solr_query='{"q": "gender:Male", "start":"10"}' LIMIT 10;
         ```                 
+      
+10. Pesquisas:
+    - [Pesquisa DSE](https://docs.datastax.com/en/dse/6.0/dse-dev/datastax_enterprise/search/searchTOC.html)
+    
+    - [Sobre a pesquisa DSE](https://docs.datastax.com/en/dse/6.0/dse-dev/datastax_enterprise/search/searchAbout.html)
+    
+    - [Pesquisa DSE versus código aberto Apache Solr](https://docs.datastax.com/en/dse/6.8/dse-dev/datastax_enterprise/search/searchOssSolrDiff.html)
+    
+    - [Arquitetura de pesquisa DSE](https://docs.datastax.com/en/dse/6.0/dse-dev/datastax_enterprise/dbArch/archSearch.html)
+
+    - [Configurando a pesquisa DSE](https://docs.datastax.com/en/dse/6.0/dse-dev/datastax_enterprise/search/configSearch.html)
+
+    - [Visualizando esquema e configuração do índice de pesquisa](https://docs.datastax.com/en/dse/6.0/dse-dev/datastax_enterprise/search/addingViewingIndexResources.html)
+    
+    - [Filtrando usando um índice de pesquisa](https://docs.datastax.com/en/dse/6.0/cql/cql/cql_using/search_index/siQueryTOC.html)
+    
+    - [Limitando resultados e paginação](https://docs.datastax.com/en/dse/6.0/cql/cql/cql_using/search_index/cursorsDeepPaging.html)
+
+    - [Resultados de Paginação](https://lucene.apache.org/solr/guide/6_6/pagination-of-results.html)
+
+    - [Usando intervalos de datas em solr_query](https://docs.datastax.com/en/dse/6.0/cql/cql/cql_using/search_index/dateRange.html)
+
+    - [Recursos não suportados para a pesquisa DSE](https://docs.datastax.com/en/dse/6.0/dse-dev/datastax_enterprise/search/unsupportedSearchFeatures.html)            
