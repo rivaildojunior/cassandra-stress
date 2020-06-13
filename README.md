@@ -81,7 +81,11 @@
 
 8. Exemplo de Requisição:   
     - Range de data começando da página 0 com 10 objetos: [link](http://localhost:8080/users/filters?birthday_ini=2019-01-13&birthday_end=2020-02-20&start=0&size=10)
-              
+    - Buscando nome com curingas: [link](http://localhost:8080/users/filters?name=*%20Ford)
+    - Filtro com ordenação descendente : [link](http://localhost:8080/users/filters?desc=gender)
+    - Filtro com ordenação ascendente  : [link](http://localhost:8080/users/filters?asc=gender)
+    - Filtrando por vários campos: [link](http://localhost:8080/users/filters?birthday_ini=2001-06-01&birthday_end=2001-06-01&city=Wejekas&desc=gender&name=*%20Ford%20&size=20)
+    
 9. Filtre uma consulta CQL usando a solr_query:   
     - Exemplo de Query Solr para ordenação de campo com `docValues:true`:
         ```CQL

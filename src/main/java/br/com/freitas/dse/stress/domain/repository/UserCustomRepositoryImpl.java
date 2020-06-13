@@ -20,7 +20,7 @@ public class UserCustomRepositoryImpl implements UserCustomRepository {
         this.cqlTemplate = cqlTemplate;
     }
 
-    public List<User> findUserByFilters(Map<String, Object> map, String order, Integer page, Integer size) {
+    public List<User> findUserByFilters(Map<String, Object> map, String asc, String desc, Integer page, Integer size) {
         Select.Where select = QueryBuilder.select().from("tb_user").where();
 
         Map<String, Object> filters = this.getMapForSolrQuery(map);
@@ -29,8 +29,12 @@ public class UserCustomRepositoryImpl implements UserCustomRepository {
             select.limit(size);
         }
 
-        if (order != null) {
-            filters.put("sort", order + " asc");
+        if (desc != null) {
+            filters.put("sort", desc + " desc");
+        }
+
+        if (asc != null) {
+            filters.put("sort", asc + " asc");
         }
 
         filters.put("start", this.getPage(page, size));
