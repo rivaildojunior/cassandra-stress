@@ -32,25 +32,23 @@
       user@user:~$ docker exec -it demo-dse cqlsh
       ```
    
-4. Criando keyspace:
+4. Criando keyspace e tabela:
       ```CQL
       cqlsh> CREATE KEYSPACE IF NOT EXISTS ep9cas001 WITH REPLICATION = { 'class' : 'NetworkTopologyStrategy', 'dc1' : 2 };
       cqlsh> USE ep9cas001;
-      ```        
-
-5. Subindo a aplicação:
-   - Basta clonar o projeto:
-     ```console
-     user@user:~$ git clone https://github.com/RafaelOFreitas/cassandra-stress.git
-     ```
+      cqlsh:ep9cas001> CREATE TABLE ep9cas001.tb_user
+      (
+           id       uuid,
+           name     text,
+           gender   text,
+           birthday timestamp,
+           city     text,
    
-   - Importe o projeto na IDE como um projeto Maven.
-   - Caso as dependências maven não sejam importadas automaticamente, na pasta do projeto executar:
-     ```console
-     user@user:~$ mvn clean install
-     ```
+           PRIMARY KEY (id)
+      );
+      ```        
         
-6. Importe os dados para simular a carga do banco:
+5. Importe os dados para simular a carga do banco:
     - A carga de dados em data.csv possui um milhão de linhas para serem importadas.
     
     - Primeiro precisamos copiar os dados de `data.csv` para o container:
@@ -69,16 +67,25 @@
       Processed: 1000000 rows; Rate:    6850 rows/s; Avg. rate:   17392 rows/s
       1000000 rows imported from 1 files in 57.500 seconds (0 skipped).
       ```
-    
-    - O passo da importação dos dados deve ser realizada anteriormente ao subir a aplicação pelo fato
-    de configurarmos `schema-action` para recriar a keyspace ao executar a mesma.
 
-7. Criando os índices de pesquisa:
+6. Criando os índices de pesquisa:
     ```CQL
     cqlsh> USE ep9cas001;
     cqlsh:ep9cas001> CREATE SEARCH INDEX IF NOT EXISTS ON ep9cas001.tb_user WITH COLUMNS name {docValues:true}, gender {docValues:true}, birthday {docValues:true}, city {docValues:true, excluded : false};
     ```
 
+7. Subindo a aplicação:
+   - Basta clonar o projeto:
+     ```console
+     user@user:~$ git clone https://github.com/RafaelOFreitas/cassandra-stress.git
+     ```
+   
+   - Importe o projeto na IDE como um projeto Maven.
+   - Caso as dependências maven não sejam importadas automaticamente, na pasta do projeto executar:
+     ```console
+     user@user:~$ mvn clean install
+     ```
+     
 8. Exemplo de Requisição:   
     - Range de data começando da página 0 com 10 objetos: [link](http://localhost:8080/users/filters?birthday_ini=2019-01-13&birthday_end=2020-02-20&start=0&size=10)
     - Buscando nome com curingas: [link](http://localhost:8080/users/filters?name=*%20Ford)

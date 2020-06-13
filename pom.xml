@@ -18,9 +18,6 @@
 
     <properties>
         <java.version>1.8</java.version>
-        <modelmapper.version>2.3.0</modelmapper.version>
-        <cassandra-all.version>3.11.6</cassandra-all.version>
-        <cassandra-migration.version>2.2.0</cassandra-migration.version>
         <metrics-core.version>3.1.0</metrics-core.version>
         <json.version>20200518</json.version>
     </properties>
@@ -39,19 +36,8 @@
         </dependency>
 
         <dependency>
-            <groupId>org.modelmapper</groupId>
-            <artifactId>modelmapper</artifactId>
-            <version>${modelmapper.version}</version>
-        </dependency>
-
-        <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-data-cassandra</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.cognitor.cassandra</groupId>
-            <artifactId>cassandra-migration-spring-boot-starter</artifactId>
-            <version>${cassandra-migration.version}</version>
         </dependency>
 
         <dependency>
