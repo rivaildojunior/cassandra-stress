@@ -117,7 +117,28 @@
         ```CQL
         cqlsh:ep9cas001> SELECT * FROM ep9cas001.tb_user WHERE solr_query='{"q": "gender:Male", "start":"10"}' LIMIT 10;
         ```                 
-      
+
+10. Testes (`interval (ms) 300`):
+    - 200 usuários por filtro `1.000‬ req`:
+        <p align="center">
+          <img src="img/response_time_gaph_200_users.png">
+        </p>
+        
+    - 2.000 usuários por filtro `10.000‬ req`:
+        <p align="center">
+          <img src="img/response_time_gaph_2000_users.png">
+        </p>
+
+    - 20.000 usuários `20.000 req`:
+        <p align="center">
+          <img src="img/response_time_gaph_20000_users.png">
+        </p> 
+        
+    - 10.000 usuários por filtro `50.000 req`:
+        <p align="center">
+          <img src="img/response_time_gaph_10000_users.png">
+        </p>
+                                    
 10. Pesquisas:
     - [Pesquisa DSE](https://docs.datastax.com/en/dse/6.0/dse-dev/datastax_enterprise/search/searchTOC.html)
     
