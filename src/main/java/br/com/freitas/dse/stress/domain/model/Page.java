@@ -71,7 +71,7 @@ public class Page {
 
         /*TODO
             Implementado para saber a quantidade de registros retornados pela query sem LIMIT.
-            Este método é necessário apenas se o usuário não estiver na página 0, visto que o client já possui
+            Este método é necessário apenas se o usuário estiver na página 0, visto que caso contrário o client já possui
             a quantidade de páginas a serem exibidas para o usuário.
         */
         private Integer getRows(QuerySolr filters) {

@@ -36,7 +36,7 @@ public class UserCustomRepositoryImpl implements UserCustomRepository {
 
         /*TODO
             O spring-data-cassandra possui um objeto para criar a paginação (Slice<T> .getPageable()), porém os métodos
-            não são implementados corretamente, forçando o usuário a criar sua própria implementação, esta pode ser seguida
+            não são implementados para paginação básica, forçando o usuário a criar sua própria implementação, esta pode ser seguida
             como exemplo.
         */
         return UserPageable.builder()
