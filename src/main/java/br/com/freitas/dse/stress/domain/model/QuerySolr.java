@@ -34,8 +34,7 @@ public class QuerySolr {
         }
 
         public Builder withRangeDate(String key, Object dateIni, Object dateEnd) {
-            StringBuilder sb = new StringBuilder("\"")
-                    .append(key)
+            StringBuilder sb = new StringBuilder(key)
                     .append(":[")
                     .append(dateIni)
                     .append("T00:00:00Z TO ")
